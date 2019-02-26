@@ -1,0 +1,42 @@
+
+var int a;
+var real b;
+var complex c;
+var quaternion d;
+var octonion e;
+
+var vec2 f;
+var vec3 g;
+var vec4 h;
+var mat4x4 i;
+var mat3x3 j;
+var mat2x2 k;
+
+var arr int l;			// std::vector<int>
+var map string int m;	// std::map<std::string,int>
+var set string n;		// std::set<string>
+var string o;			// std::string
+
+
+
+call arr::resize( l, 3  );
+var int z;
+z = call function_name_1( 31, "Hello World! ", a, l[0] );
+
+func function_name_1 = def ( arg int A, arg string B, ref int _a, ret vec3 _b ) -> int
+{
+	_a = A;
+	_b = A * _a;
+	
+	var int C;
+	C = call sqrt( {a*3} );
+	
+	call print( B );
+	call print( C );
+	call print( " " );
+	call print( A );
+	
+	return C;
+}
+
+
