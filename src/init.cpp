@@ -4,12 +4,12 @@
 
 #include "sslc.h"
 
-#define REGISTER_TYPE( name, size )		\
+#define REGISTER_TYPE( _name, size )		\
 		{								\
 			t = new type;				\
-			t->name = name;				\
+			t->name = _name;				\
 			t->size_bytes = size;		\
-			this->types[name] = t;		\
+			this->types[_name] = t;		\
 			t = NULL;					\
 		}
 
@@ -36,11 +36,11 @@ namespace sslc
 		
 		REGISTER_TYPE( "real", sizeof(double) );
 		this->TYPE_REAL = this->types["real"];
-		REGISTER_TYPE( "complex", sizeof(std::complex) );
+		REGISTER_TYPE( "complex", sizeof(complex) );
 		this->TYPE_COMPLEX = this->types["complex"];
-		REGISTER_TYPE( "quaternion", sizeof(boost::math::quaternion) );
+		REGISTER_TYPE( "quaternion", sizeof(quaternion) );
 		this->TYPE_QUATERNION = this->types["quaternion"];
-		REGISTER_TYPE( "octonion", sizeof(boost::math::octonion) );
+		REGISTER_TYPE( "octonion", sizeof(octonion) );
 		this->TYPE_OCTONION = this->types["octonion"];
 		
 		REGISTER_TYPE( "vec2", sizeof(glm::vec2) );

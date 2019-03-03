@@ -58,41 +58,41 @@ namespace sslc
 			else if( a->type_ref == this->TYPE_COMPLEX )
 			{
 				a->access<std::string>() += "(";
-				a->access<std::string>() += b->get<std::complex>().real();
+				a->access<std::string>() += b->get<complex>().real();
 				a->access<std::string>() += ",";
-				a->access<std::string>() += b->get<std::complex>().imag();
+				a->access<std::string>() += b->get<complex>().imag();
 				a->access<std::string>() += ")";
 			}
 			else if( a->type_ref == this->TYPE_QUATERNION )
 			{
 				a->access<std::string>() += "(";
-				a->access<std::string>() += b->get<boost::math::quaternion>().R_component_1();
+				a->access<std::string>() += b->get<quaternion>().R_component_1();
 				a->access<std::string>() += ",";
-				a->access<std::string>() += b->get<boost::math::quaternion>().R_component_2();
+				a->access<std::string>() += b->get<quaternion>().R_component_2();
 				a->access<std::string>() += ",";
-				a->access<std::string>() += b->get<boost::math::quaternion>().R_component_3();
+				a->access<std::string>() += b->get<quaternion>().R_component_3();
 				a->access<std::string>() += ",";
-				a->access<std::string>() += b->get<boost::math::quaternion>().R_component_4();
+				a->access<std::string>() += b->get<quaternion>().R_component_4();
 				a->access<std::string>() += ")";
 			}
 			else if( a->type_ref == this->TYPE_OCTONION )
 			{
 				a->access<std::string>() += "(";
-				a->access<std::string>() += b->get<boost::math::octonion>().R_component_1();
+				a->access<std::string>() += b->get<octonion>().R_component_1();
 				a->access<std::string>() += ",";
-				a->access<std::string>() += b->get<boost::math::octonion>().R_component_2();
+				a->access<std::string>() += b->get<octonion>().R_component_2();
 				a->access<std::string>() += ",";
-				a->access<std::string>() += b->get<boost::math::octonion>().R_component_3();
+				a->access<std::string>() += b->get<octonion>().R_component_3();
 				a->access<std::string>() += ",";
-				a->access<std::string>() += b->get<boost::math::octonion>().R_component_4();
+				a->access<std::string>() += b->get<octonion>().R_component_4();
 				a->access<std::string>() += ",";
-				a->access<std::string>() += b->get<boost::math::octonion>().R_component_5();
+				a->access<std::string>() += b->get<octonion>().R_component_5();
 				a->access<std::string>() += ",";
-				a->access<std::string>() += b->get<boost::math::octonion>().R_component_6();
+				a->access<std::string>() += b->get<octonion>().R_component_6();
 				a->access<std::string>() += ",";
-				a->access<std::string>() += b->get<boost::math::octonion>().R_component_7();
+				a->access<std::string>() += b->get<octonion>().R_component_7();
 				a->access<std::string>() += ",";
-				a->access<std::string>() += b->get<boost::math::octonion>().R_component_8();
+				a->access<std::string>() += b->get<octonion>().R_component_8();
 				a->access<std::string>() += ")";
 			}
 			
@@ -132,7 +132,6 @@ namespace sslc
 				a->access<std::string>() += "(";
 				for( int i = 0; i < 2; ++i )
 				{
-					auto c = glm::column( b->get<glm::mat2x2>(), i );
 					if( i != 0 )
 						a->access<std::string>() += ",";
 					a->access<std::string>() += "(";
@@ -140,7 +139,7 @@ namespace sslc
 					{
 						if( j != 0 )
 							a->access<std::string>() += ",";
-						a->access<std::string>() += std::to_string( glm::row( c, j ) );
+						a->access<std::string>() += std::to_string( b->get<glm::mat2x2>()[i][j] );
 					}
 					a->access<std::string>() += ")";
 				}
@@ -151,7 +150,6 @@ namespace sslc
 				a->access<std::string>() += "(";
 				for( int i = 0; i < 3; ++i )
 				{
-					auto c = glm::column( b->get<glm::mat3x3>(), i );
 					if( i != 0 )
 						a->access<std::string>() += ",";
 					a->access<std::string>() += "(";
@@ -159,7 +157,7 @@ namespace sslc
 					{
 						if( j != 0 )
 							a->access<std::string>() += ",";
-						a->access<std::string>() += std::to_string( glm::row( c, j ) );
+						a->access<std::string>() += std::to_string( b->get<glm::mat3x3>()[i][j] );
 					}
 					a->access<std::string>() += ")";
 				}
@@ -170,7 +168,6 @@ namespace sslc
 				a->access<std::string>() += "(";
 				for( int i = 0; i < 4; ++i )
 				{
-					auto c = glm::column( b->get<glm::mat4x4>(), i );
 					if( i != 0 )
 						a->access<std::string>() += ",";
 					a->access<std::string>() += "(";
@@ -178,21 +175,21 @@ namespace sslc
 					{
 						if( j != 0 )
 							a->access<std::string>() += ",";
-						a->access<std::string>() += std::to_string( glm::row( c, j ) );
+						a->access<std::string>() += std::to_string( b->get<glm::mat4x4>()[i][j] );
 					}
 					a->access<std::string>() += ")";
 				}
 				a->access<std::string>() += ")";
 			}
 		}
-		else if( a->type_ref->type_ref == b->type_ref )
+		else if( a->type_ref == b->type_ref )
 		{
-			else if( a->type_ref == this->TYPE_COMPLEX )
-				a->access<std::complex>() += b->get<std::complex>();
+			if( a->type_ref == this->TYPE_COMPLEX )
+				a->access<complex>() += b->get<complex>();
 			else if( a->type_ref == this->TYPE_QUATERNION )
-				a->access<boost::math::quaternion>() += b->get<boost::math::quaternion>();
+				a->access<quaternion>() += b->get<quaternion>();
 			else if( a->type_ref == this->TYPE_OCTONION )
-				a->access<boost::math::octonion>() += b->get<boost::math::octonion>();
+				a->access<octonion>() += b->get<octonion>();
 			
 			else if( a->type_ref == this->TYPE_VEC2 )
 				a->access<glm::vec2>() += b->get<glm::vec2>();
@@ -243,14 +240,14 @@ namespace sslc
 			else if( b->type_ref == this->TYPE_REAL )
 				a->access<double>() -= b->get<double>();
 		}
-		else if( a->type_ref->type_ref == b->type_ref )
+		else if( a->type_ref == b->type_ref )
 		{
-			else if( a->type_ref == this->TYPE_COMPLEX )
-				a->access<std::complex>() -= b->get<std::complex>();
+			if( a->type_ref == this->TYPE_COMPLEX )
+				a->access<complex>() -= b->get<complex>();
 			else if( a->type_ref == this->TYPE_QUATERNION )
-				a->access<boost::math::quaternion>() -= b->get<boost::math::quaternion>();
+				a->access<quaternion>() -= b->get<quaternion>();
 			else if( a->type_ref == this->TYPE_OCTONION )
-				a->access<boost::math::octonion>() -= b->get<boost::math::octonion>();
+				a->access<octonion>() -= b->get<octonion>();
 			
 			else if( a->type_ref == this->TYPE_VEC2 )
 				a->access<glm::vec2>() -= b->get<glm::vec2>();
@@ -305,41 +302,41 @@ namespace sslc
 		else if( a->type_ref == this->TYPE_COMPLEX )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
-				a->access<std::complex>() *= b->get<char>();
+				a->access<complex>() *= b->get<char>();
 			else if( b->type_ref == this->TYPE_INT )
-				a->access<std::complex>() *= b->get<long long>();
+				a->access<complex>() *= b->get<long long>();
 			else if( b->type_ref == this->TYPE_REAL )
-				a->access<std::complex>() *= b->get<double>();
+				a->access<complex>() *= b->get<double>();
 			else if( b->type_ref == this->TYPE_COMPLEX )
-				a->access<std::complex>() *= b->get<std::complex>();
+				a->access<complex>() *= b->get<complex>();
 		}
 		else if( a->type_ref == this->TYPE_QUATERNION )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
-				a->access<std::complex>() *= b->get<char>();
+				a->access<quaternion>() *= b->get<char>();
 			else if( b->type_ref == this->TYPE_INT )
-				a->access<std::complex>() *= b->get<long long>();
+				a->access<quaternion>() *= b->get<long long>();
 			else if( b->type_ref == this->TYPE_REAL )
-				a->access<std::complex>() *= b->get<double>();
+				a->access<quaternion>() *= b->get<double>();
 			else if( b->type_ref == this->TYPE_COMPLEX )
-				a->access<std::complex>() *= b->get<std::complex>();
+				a->access<quaternion>() *= b->get<complex>();
 			else if( b->type_ref == this->TYPE_QUATERNION )
-				a->access<boost::math::quaternion>() *= b->get<boost::math::quaternion>();
+				a->access<quaternion>() *= b->get<quaternion>();
 		}
 		else if( a->type_ref == this->TYPE_OCTONION )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
-				a->access<std::complex>() *= b->get<char>();
+				a->access<octonion>() *= b->get<char>();
 			else if( b->type_ref == this->TYPE_INT )
-				a->access<std::complex>() *= b->get<long long>();
+				a->access<octonion>() *= b->get<long long>();
 			else if( b->type_ref == this->TYPE_REAL )
-				a->access<std::complex>() *= b->get<double>();
+				a->access<octonion>() *= b->get<double>();
 			else if( b->type_ref == this->TYPE_COMPLEX )
-				a->access<std::complex>() *= b->get<std::complex>();
+				a->access<octonion>() *= b->get<complex>();
 			else if( b->type_ref == this->TYPE_QUATERNION )
-				a->access<boost::math::quaternion>() *= b->get<boost::math::quaternion>();
+				a->access<octonion>() *= b->get<quaternion>();
 			else if( b->type_ref == this->TYPE_OCTONION )
-				a->access<boost::math::quaternion>() *= b->get<boost::math::octonion>();
+				a->access<octonion>() *= b->get<octonion>();
 		}
 		
 		else if( a->type_ref == this->TYPE_VEC2 )
@@ -443,41 +440,41 @@ namespace sslc
 		else if( a->type_ref == this->TYPE_COMPLEX )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
-				a->access<std::complex>() /= b->get<char>();
+				a->access<complex>() /= b->get<char>();
 			else if( b->type_ref == this->TYPE_INT )
-				a->access<std::complex>() /= b->get<long long>();
+				a->access<complex>() /= b->get<long long>();
 			else if( b->type_ref == this->TYPE_REAL )
-				a->access<std::complex>() /= b->get<double>();
+				a->access<complex>() /= b->get<double>();
 			else if( b->type_ref == this->TYPE_COMPLEX )
-				a->access<std::complex>() /= b->get<std::complex>();
+				a->access<complex>() /= b->get<complex>();
 		}
 		else if( a->type_ref == this->TYPE_QUATERNION )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
-				a->access<std::complex>() /= b->get<char>();
+				a->access<quaternion>() /= b->get<char>();
 			else if( b->type_ref == this->TYPE_INT )
-				a->access<std::complex>() /= b->get<long long>();
+				a->access<quaternion>() /= b->get<long long>();
 			else if( b->type_ref == this->TYPE_REAL )
-				a->access<std::complex>() /= b->get<double>();
+				a->access<quaternion>() /= b->get<double>();
 			else if( b->type_ref == this->TYPE_COMPLEX )
-				a->access<std::complex>() /= b->get<std::complex>();
+				a->access<quaternion>() /= b->get<complex>();
 			else if( b->type_ref == this->TYPE_QUATERNION )
-				a->access<boost::math::quaternion>() /= b->get<boost::math::quaternion>();
+				a->access<quaternion>() /= b->get<quaternion>();
 		}
 		else if( a->type_ref == this->TYPE_OCTONION )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
-				a->access<std::complex>() /= b->get<char>();
+				a->access<octonion>() /= b->get<char>();
 			else if( b->type_ref == this->TYPE_INT )
-				a->access<std::complex>() /= b->get<long long>();
+				a->access<octonion>() /= b->get<long long>();
 			else if( b->type_ref == this->TYPE_REAL )
-				a->access<std::complex>() /= b->get<double>();
+				a->access<octonion>() /= b->get<double>();
 			else if( b->type_ref == this->TYPE_COMPLEX )
-				a->access<std::complex>() /= b->get<std::complex>();
+				a->access<octonion>() /= b->get<complex>();
 			else if( b->type_ref == this->TYPE_QUATERNION )
-				a->access<boost::math::quaternion>() /= b->get<boost::math::quaternion>();
+				a->access<octonion>() /= b->get<quaternion>();
 			else if( b->type_ref == this->TYPE_OCTONION )
-				a->access<boost::math::quaternion>() /= b->get<boost::math::octonion>();
+				a->access<octonion>() /= b->get<octonion>();
 		}
 		
 		else if( a->type_ref == this->TYPE_VEC2 )
@@ -550,7 +547,7 @@ namespace sslc
 		variable * a = this->stack[this->stack.size()-2];
 		variable * b = this->stack[this->stack.size()-1];
 		
-		if( a->type_ref->type_ref == b->type_ref )
+		if( a->type_ref == b->type_ref )
 		{
 			if( a->type_ref == this->TYPE_CHAR )
 				a->access<char>() %= b->get<char>();
@@ -558,7 +555,7 @@ namespace sslc
 				a->access<long long>() %= b->get<long long>();
 			
 			else if( a->type_ref == this->TYPE_REAL )
-				a->set<double>( fmod( a->get<double>(), b->get<double>() ) ) = b->get<double>();
+				a->set<double>( fmod( a->get<double>(), b->get<double>() ) );
 		}
 		
 		this->pop();
@@ -575,11 +572,11 @@ namespace sslc
 		else if( a->type_ref == this->TYPE_REAL )
 			a->set<double>( -(a->get<double>()) );
 		else if( a->type_ref == this->TYPE_COMPLEX )
-			a->set<std::complex>( -(a->get<std::complex>()) );
+			a->set<complex>( -(a->get<complex>()) );
 		else if( a->type_ref == this->TYPE_QUATERNION )
-			a->set<boost::math::quaternion>( -(a->get<boost::math::quaternion>()) );
+			a->set<quaternion>( -(a->get<quaternion>()) );
 		else if( a->type_ref == this->TYPE_OCTONION )
-			a->set<boost::math::octonion>( -(a->get<boost::math::octonion>()) );
+			a->set<octonion>( -(a->get<octonion>()) );
 		
 		else if( a->type_ref == this->TYPE_VEC2 )
 			a->set<glm::vec2>( -(a->get<glm::vec2>()) );
@@ -600,7 +597,12 @@ namespace sslc
 		variable * a = this->stack[this->stack.size()-2];
 		variable * b = this->stack[this->stack.size()-1];
 		
-		if( a->type_ref == this->TYPE_ARRAY )
+		if( a->type_ref == this->TYPE_CHAR )
+		{
+			if( b->type_ref == this->TYPE_BOOL )
+				a->set<bool>( a->get<bool>() ^ b->get<bool>() );
+		}
+		else if( a->type_ref == this->TYPE_ARRAY )
 		{
 			
 		}
@@ -638,7 +640,12 @@ namespace sslc
 		variable * a = this->stack[this->stack.size()-2];
 		variable * b = this->stack[this->stack.size()-1];
 		
-		if( a->type_ref == this->TYPE_ARRAY )
+		if( a->type_ref == this->TYPE_CHAR )
+		{
+			if( b->type_ref == this->TYPE_BOOL )
+				a->set<bool>( a->get<bool>() || b->get<bool>() );
+		}
+		else if( a->type_ref == this->TYPE_ARRAY )
 		{
 			
 		}
@@ -676,7 +683,16 @@ namespace sslc
 		variable * a = this->stack[this->stack.size()-2];
 		variable * b = this->stack[this->stack.size()-1];
 		
-		if( a->type_ref == this->TYPE_ARRAY )
+		if( a->type_ref == this->TYPE_CHAR )
+		{
+			if( b->type_ref == this->TYPE_BOOL )
+				a->set<bool>( a->get<bool>() && b->get<bool>() );
+		}
+		else if( a->type_ref == this->TYPE_CHAR )
+		{
+			a->set<bool>( ~(a->get<bool>()) );
+		}
+		else if( a->type_ref == this->TYPE_ARRAY )
 		{
 			
 		}
@@ -705,7 +721,7 @@ namespace sslc
 			for( i = 0; i < size; ++i, ++A, ++B )
 				*A &= *B;
 			size = a->type_ref->size_bytes;
-			for( ; i < size; ++i; ++A )
+			for( ; i < size; ++i, ++A )
 				*A &= 0;
 		}
 		
@@ -714,10 +730,13 @@ namespace sslc
 	
 	void machine::binary_not()
 	{
-		variable * a = this->stack[this->stack.size()-2];
-		variable * b = this->stack[this->stack.size()-1];
+		variable * a = this->stack[this->stack.size()-1];
 		
-		if( a->type_ref == this->TYPE_ARRAY )
+		if( a->type_ref == this->TYPE_CHAR )
+		{
+			a->set<bool>( ~(a->get<bool>()) );
+		}
+		else if( a->type_ref == this->TYPE_ARRAY )
 		{
 			
 		}
@@ -743,8 +762,6 @@ namespace sslc
 			for( ; A < AE; ++A )
 				*A = ~(*A);
 		}
-		
-		this->pop();
 	}
 	
 	/*
@@ -763,6 +780,12 @@ namespace sslc
 		bool value = false;
 		
 		if( a->type_ref == this->TYPE_CHAR )
+		{
+			if( b->type_ref == this->TYPE_BOOL )
+				if( a->get<bool>() == b->get<bool>() )
+					value = true;
+		}
+		else if( a->type_ref == this->TYPE_CHAR )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
 				if( a->get<char>() == b->get<char>() )
@@ -817,6 +840,12 @@ namespace sslc
 		bool value = false;
 		
 		if( a->type_ref == this->TYPE_CHAR )
+		{
+			if( b->type_ref == this->TYPE_BOOL )
+				if( a->get<bool>() != b->get<bool>() )
+					value = true;
+		}
+		else if( a->type_ref == this->TYPE_CHAR )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
 				if( a->get<char>() != b->get<char>() )

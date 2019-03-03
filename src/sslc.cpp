@@ -7,7 +7,7 @@
 #include <map>
 #include <set>
 
-#include <stringstream>
+#include <sstream>
 #include <iostream>
 #include <fstream>
 
@@ -99,9 +99,19 @@ namespace sslc
 	
 	
 	
+	int machine::add_function_manually( const char * function_name, function * func )
+	{
+		if( this->functions.find(function_name) == this->functions.end() )
+		{
+			this->functions[function_name] = func;
+			return 0;
+		}
+		return 1;		// error
+	}
+	
 	void machine::printchar()
 	{
-		if( this->stack.back()->type_ref == this->TYPE_char )
+		if( this->stack.back()->type_ref == this->TYPE_CHAR )
 			printf( "%c", this->stack.back()->get<char>() );
 		this->pop();
 	}
@@ -129,7 +139,7 @@ namespace sslc
 	
 	void machine::getchar()
 	{
-		if( this->stack.back()->type_ref == this->TYPE_char )
+		if( this->stack.back()->type_ref == this->TYPE_CHAR )
 			scanf( "%c", &(this->stack.back()->access<char>()) );
 		this->pop();
 	}
@@ -161,7 +171,7 @@ namespace sslc
 		//std::vector<std::string> args;
 		//for( int i = 0; i < argc; ++i )
 		//	args.emplace_back( argv );
-		return this->call( "main" /* , argc, args*/ );
+		return this->call<long long>( "main" /* , argc, args*/ );
 	}
 	
 	machine::machine()
@@ -215,10 +225,10 @@ namespace sslc
 		while( stack.size() != 0 )
 			pop();
 		for( auto it = types.begin(); it != types.end(); ++it )
-			delete *it;
+			delete it->second;
 		types.clear();
 		for( auto it = functions.begin(); it != functions.end(); ++it )
-			delete *it;
+			delete it->second;
 		functions.clear();
 	}
 	

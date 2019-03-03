@@ -16,16 +16,16 @@ namespace sslc
 			{
 			case CALL:
 				
-				this->stack.emplace_back( this->rsp );
-				this->stack.emplace_back( this->rip );
-				this->stack.emplace_back( this->current_function );
+				this->stack.emplace_back( (variable*)(this->rsp) );
+				this->stack.emplace_back( (variable*)(this->rip) );
+				this->stack.emplace_back( (variable*)(this->current_function) );
 				
 				this->rsp = this->stack.size();
 				
 				str = *(const char*)(this->rip+1);
-				this->current_function = this->functions[*(const char*)(this->rip+1)];
+				this->current_function = this->functions[(const char*)(this->rip+1)];
 				for( i = 0; i < this->current_function->local_variables_types.size(); ++i )
-					this->push( *varaible::make( this->current_function->local_variables_types[i] ) );
+					this->push( *variable::make( this->current_function->local_variables_types[i] ) );
 				
 				this->rip = &(this->current_function->code.front());
 				
@@ -35,18 +35,18 @@ namespace sslc
 			
 			case RET:
 				
-				for( i = this->rsp - 3 - this->current_funtion->args_types.size(); i < this->rsp-3; ++i )
+				for( i = this->rsp - 3 - this->current_function->args_types.size(); i < this->rsp-3; ++i )
 					this->stack[i]->dereference();
-				for( i = this->rsp-3; i < this->rsp + this->current_funtion->local_variables_types.size(); ++i )
+				for( i = this->rsp-3; i < this->rsp + this->current_function->local_variables_types.size(); ++i )
 					this->stack[i]->dereference();
 				
 				i = this->rsp;
 				
-				this->current_funtion = this->stack[i];
-				this->rip = this->stack[i-1];
-				this->rsp = this->stack[i-2];
+				this->current_function = (function*)(this->stack[i]);
+				this->rip = &(this->current_function->code.front()) + (long long)(this->stack[i-1]);
+				this->rsp = (long long)(this->stack[i-2]);
 				
-				this->stack.erase( this->stack.begin() + i - 3 - this->current_funtion->args_types.size(), this->stack.begin() + i + this->current_funtion->local_variables_types.size() );
+				this->stack.erase( this->stack.begin() + i - 3 - this->current_function->args_types.size(), this->stack.begin() + i + this->current_function->local_variables_types.size() );
 				
 				break;
 			
@@ -189,21 +189,22 @@ namespace sslc
 				break;
 			
 			case PUSHCHAR:
-				this->push<char>( *(const char*)(this->rip+1) );
+				this->push<char>( *(char*)(this->rip+1) );
 				this->rip += 1 + sizeof(char);
 				break;
 			case PUSHINT:
-				this->push<long long>( *(const long long*)(this->rip+1) );
+				this->push<long long>( *(long long*)(this->rip+1) );
 				this->rip += 1 + sizeof(long long);
 				break;
 			case PUSHREAL:
-				this->push<char>( *(const double*)(this->rip+1) );
+				this->push<double>( *(double*)(this->rip+1) );
 				this->rip += 1 + sizeof(double);
 				break;
 			case PUSHSTR:
-				this->push<std::string>( std::string(*(const char*)(this->rip+1)) );
-				i = strlen( *(const char*)(this->rip+1) );
-				this->rip += 1 + strlen( *(const char*)(this->rip+1) ) + 1;
+				str = (const char*)(this->rip+1);
+				this->push<std::string>( str );
+				i = strlen( (const char*)(this->rip+1) );
+				this->rip += 1 + strlen( (const char*)(this->rip+1) ) + 1;
 				break;
 			
 			case PUSHREF:
@@ -217,22 +218,22 @@ namespace sslc
 				break;
 			
 			case POPCOPY:
-				i = this->rsp + *(const long long*)(this->rip+1)
+				i = this->rsp + *(const long long*)(this->rip+1);
 				this->stack[i]->dereference();
 				this->stack[i]->set_value_of( *(this->stack[this->rsp+*(const long long*)(this->rip+1)]) );
 				this->rip += 1 + sizeof(long long);
 				this->pop();
 				break;
 			case POPREF:
-				i = this->rsp + *(const long long*)(this->rip+1)
+				i = this->rsp + *(const long long*)(this->rip+1);
 				 this->stack[i]->dereference();
-				 this->stack.back()->reference();
+				 this->stack.back()->makereference();
 				 this->stack[i] = this->stack.back();
 				this->rip += 1 + sizeof(long long);
 				this->pop();
 				break;
 			case POPVALUE:
-				i = this->rsp + *(const long long*)(this->rip+1)
+				i = this->rsp + *(const long long*)(this->rip+1);
 				this->stack[i]->set_value_of( *(this->stack.back()) );
 				this->rip += 1 + sizeof(long long);
 				this->pop();

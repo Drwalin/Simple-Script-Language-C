@@ -8,8 +8,16 @@
 
 #include <typeindex>
 
+#include <glm/glm.hpp>
+#include <boost/math/octonion.hpp>
+#include <boost/math/quaternion.hpp>
+#include <complex>
+
 namespace sslc
 {
+	typedef std::complex<double> complex;
+	typedef boost::math::quaternion<double> quaternion;
+	typedef boost::math::octonion<double> octonion;
 	
 	class type
 	{
@@ -72,6 +80,7 @@ namespace sslc
 	class function
 	{
 	private:
+	public:
 		
 		bool registered;		// true -> function::code contains function pointer : false -> function::code contains 'compiled' code
 		std::vector < unsigned char > code;
@@ -120,15 +129,13 @@ namespace sslc
 		inline void call_( T arg, Args... args );
 		
 		template < typename T >
-		inline void push( T value );
-		inline void pop( bool treat_as_sslc_variable );
+		inline void push( T & value );
+		inline void pop( bool treat_as_sslc_variable = true );
 		
 		void interprete();
 		
-		template < template<typename...> class Ref >
-		type * get_type_one() const;
-		template < template<typename...> class Ref >
-		type * get_type_two() const;
+		template < typename T >
+		type * get_type_one_two() const;
 		
 		void cmpe();
 		void cmpne();
@@ -189,6 +196,8 @@ namespace sslc
 		
 		
 		
+		int add_function_manually( const char * function_name, function * func );
+		
 		template < typename T >
 		type * get_type() const;
 		
@@ -198,9 +207,9 @@ namespace sslc
 		int run( /*int argc, char ** argv*/ );					// runs main
 		
 		template < typename Ret >
-		inline variable call( const char * function_name );
+		inline Ret call( const char * function_name );
 		template < typename Ret, typename... Args >
-		inline variable call( const char * function_name, Args... args );
+		inline Ret call( const char * function_name, Args... args );
 		
 		void init();
 		
@@ -211,6 +220,7 @@ namespace sslc
 };
 
 #include "sslc.inl"
+#include "instructions_list.h"
 
 #endif
 

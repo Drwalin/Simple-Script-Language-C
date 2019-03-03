@@ -5,16 +5,20 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-#include <glm/glm.hpp>
-#include <boost/math/octonion.hpp>
-#include <boost/math/quaternion.hpp>
-#include <complex>
+#include <set>
+#include <map>
 
 #include <typeinfo>
+#include <type_traits>
 
 namespace sslc
 {
+	
+	template<typename Test, template<typename...> class Ref>
+	struct is_specialization : std::false_type {};
+	
+	template<template<typename...> class Ref, typename... Args>
+	struct is_specialization<Ref<Args...>, Ref>: std::true_type {};
 	
 	inline bool variable::valid()
 	{
@@ -42,40 +46,36 @@ namespace sslc
 	}
 	
 	template < typename T >
-	inline variable * variable::make( class machine * env );
+	inline variable * variable::make( class machine * env )
 	{
 		variable * ret = new variable();
 		ret->type_ref = env->get_type<T>();
-		ret->data = malloc( type->type_ref->size_bytes );
+		ret->data = malloc( ret->type_ref->size_bytes );
 		ret->references = 1;
 		return ret;
 	}
 	
-	static inline variable * variable::make( type * type_ref )
+	inline variable * variable::make( type * type_ref )
 	{
 		variable * ret = new variable();
 		ret->type_ref = type_ref;
-		ret->data = malloc( type->type_ref->size_bytes );
+		ret->data = malloc( ret->type_ref->size_bytes );
 		ret->references = 1;
 		return ret;
 	}
 	
 	
 	
-	template < template<typename...> class T >
-	type * machine::get_type_one() const
-	{
-		if( typeid(T) == typeid(std::vector) )
-			return this->TYPE_ARRAY;
-		else if( typeid(T) == typeid(std::set) )
-			return this->TYPE_SET;
-		return NULL;
-	}
 	
-	template < template<typename...> class T >
-	type * machine::get_type_two() const
+	
+	template < typename T >
+	type * machine::get_type_one_two() const
 	{
-		if( typeid(T) == typeid(std::map) )
+		if( is_specialization<T,std::vector>::value )
+			return this->TYPE_ARRAY;
+		else if( is_specialization<T,std::set>::value )
+			return this->TYPE_SET;
+		else if( is_specialization<T,std::map>::value )
 			return this->TYPE_MAP;
 		return NULL;
 	}
@@ -84,7 +84,9 @@ namespace sslc
 	type * machine::get_type() const
 	{
 		if( typeid(T) == typeid(char) )
-			return this->TYPE_char;
+			return this->TYPE_CHAR;
+		else if( typeid(T) == typeid(bool) )
+			return this->TYPE_BOOL;
 		else if( typeid(T) == typeid(short) )
 			return this->TYPE_INT;
 		else if( typeid(T) == typeid(int) )
@@ -108,11 +110,11 @@ namespace sslc
 		else if( typeid(T) == typeid(std::string) )
 			return this->TYPE_STRING;
 		
-		else if( typeid(T) == typeid(std::complex) )
+		else if( typeid(T) == typeid(complex) )
 			return this->TYPE_COMPLEX;
-		else if( typeid(T) == typeid(boost::math::quaternion) )
+		else if( typeid(T) == typeid(quaternion) )
 			return this->TYPE_QUATERNION;
-		else if( typeid(T) == typeid(boost::math::octonion) )
+		else if( typeid(T) == typeid(octonion) )
 			return this->TYPE_OCTONION;
 		
 		else if( typeid(T) == typeid(glm::vec2) )
@@ -128,11 +130,11 @@ namespace sslc
 		else if( typeid(T) == typeid(glm::mat4x4) )
 			return this->TYPE_MAT4X4;
 		
-		type * ret = this->get_type_one<T>();
+		type * ret = this->get_type_one_two<T>();
 		if( ret )
 			return ret;
 			
-		return this->get_type_two<T>();
+		return this->TYPE_VOID;
 	}
 	
 	template < typename T >
@@ -140,17 +142,17 @@ namespace sslc
 	{
 		if( typeid(decltype(value)) == typeid(type) )
 		{
-			this->stack.emplace_back( &value );
+			this->stack.emplace_back( (variable*)&value );
 		}
 		else
 		{
-			varaible * var = variable::make<T>( this );
+			variable * var = variable::make<T>( this );
 			if( var )
 			{
 				if( var->valid() )
 				{
 					var->access<T>() = value;
-					this->stack.emplace_back( &var );
+					this->stack.emplace_back( var );
 				}
 			}
 		}
@@ -194,7 +196,7 @@ namespace sslc
 		if( this->current_function )
 		{
 			this->interprete();
-			Ret ret = this->stack.back()->get();
+			Ret ret = this->stack.back()->get<Ret>();
 			this->pop();
 			return ret;
 		}
@@ -206,7 +208,7 @@ namespace sslc
 	inline Ret machine::call( const char * function_name, Args... args )
 	{
 		this->call_( args... );
-		return this->call( function_name );
+		return this->call<Ret>( function_name );
 	}
 	
 };
