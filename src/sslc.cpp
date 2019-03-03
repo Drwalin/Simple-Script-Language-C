@@ -43,7 +43,8 @@ namespace sslc
 	
 	void variable::set_value_of( const variable & other )
 	{
-		
+		memmove( this->data, other.data, std::min( this->type_ref->size_bytes, other.type_ref->size_bytes ) );
+		printf( "\n variable::set_value_of - is not done yet" );
 	}
 	
 	void variable::makereference()
@@ -57,6 +58,7 @@ namespace sslc
 		if( this->data )
 		{
 			this->references--;
+			printf( "\n Reference of [0x%X]: %lli", this, this->references );
 			if( this->references == 0 )
 			{
 				delete this;
@@ -197,6 +199,7 @@ namespace sslc
 		TYPE_ARRAY = NULL;
 		TYPE_MAP = NULL;
 		TYPE_SET = NULL;
+		this->stack.reserve( 1024*128 );
 	}
 	
 	machine::~machine()

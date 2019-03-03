@@ -7,12 +7,14 @@
 template < typename T >
 void add( std::vector < unsigned char > & code, const T & value )
 {
-	code.insert( code.end(), &value, (&value)+sizeof(T) );
+	code.resize( code.size() + sizeof(T) );
+	(*(T*)(&(code[code.size()-sizeof(T)]))) = value;
+	//code.insert( code.end(), &value, (&value)+sizeof(T) );
 }
 
 int main()
 {
-	sslc::machine * env = new sslc::machine();;
+	sslc::machine * env = new sslc::machine();
 	env->init();
 	
 	sslc::function * func = new sslc::function;
@@ -37,33 +39,36 @@ int main()
 	PUSH_0;						// 0x09
 	INSTRUCTION( CMPNE );		// 0x12
 	INSTRUCTION( JMPTRUE );		// 0x13
-	VALUE( 0x25 );				// 0x14
-	PUSH_A;						// 0x1B
-	INSTRUCTION( RET );			// 0x24
+	VALUE( 0x26 );				// 0x14
+	PUSH_A;						// 0x1C
+	INSTRUCTION( RET );			// 0x25
 	
-		PUSH_A;					// 0x25
-		PUSH_B;					// 0x2D
-		INSTRUCTION( MOD );		// 0x37
-		POP_C;					// 0x38
+		PUSH_A;					// 0x26
+		PUSH_B;					// 0x2F
+		INSTRUCTION( MOD );		// 0x38
+		POP_C;					// 0x39
 		
-		PUSH_B;					// 0x41
-		POP_A;					// 0x4A
+		PUSH_B;					// 0x42
+		POP_A;					// 0x4B
 		
-		PUSH_C;					// 0x53
-		POP_B;					// 0x5C
+		PUSH_C;					// 0x54
+		POP_B;					// 0x5D
 		
-		INSTRUCTION( JMP );		// 0x65
-		VALUE( 0 );				// 0x66
+		PUSH_A;
+		INSTRUCTION( PRINTI );
+		PUSH_B;
+		INSTRUCTION( PRINTI );
+		
+		INSTRUCTION( JMP );		// 0x66
+		VALUE( 0 );				// 0x67
 	
 	
 	env->add_function_manually( "NWD", func );
 	
-	
-	
-	
-	
 	long long a, b, c;
-	scanf( "%lli%lli", &a, &b );
+	a = 12;
+	b = 16;
+	//scanf( "%lli%lli", &a, &b );
 	
 	c = env->call<long long>( "NWD", a, b );
 	

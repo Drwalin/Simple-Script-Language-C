@@ -597,10 +597,10 @@ namespace sslc
 		variable * a = this->stack[this->stack.size()-2];
 		variable * b = this->stack[this->stack.size()-1];
 		
-		if( a->type_ref == this->TYPE_CHAR )
+		if( a->type_ref == this->TYPE_BOOL )
 		{
 			if( b->type_ref == this->TYPE_BOOL )
-				a->set<bool>( a->get<bool>() ^ b->get<bool>() );
+				a->set<char>( ( ( a->get<char>() && b->get<char>() == 0 ) || ( a->get<char>() == 0 && b->get<char>() ) ) ? 1 : 0 );
 		}
 		else if( a->type_ref == this->TYPE_ARRAY )
 		{
@@ -640,10 +640,10 @@ namespace sslc
 		variable * a = this->stack[this->stack.size()-2];
 		variable * b = this->stack[this->stack.size()-1];
 		
-		if( a->type_ref == this->TYPE_CHAR )
+		if( a->type_ref == this->TYPE_BOOL )
 		{
 			if( b->type_ref == this->TYPE_BOOL )
-				a->set<bool>( a->get<bool>() || b->get<bool>() );
+				a->set<char>( ( a->get<char>() | b->get<char>() ) ? 1 : 0 );
 		}
 		else if( a->type_ref == this->TYPE_ARRAY )
 		{
@@ -683,14 +683,10 @@ namespace sslc
 		variable * a = this->stack[this->stack.size()-2];
 		variable * b = this->stack[this->stack.size()-1];
 		
-		if( a->type_ref == this->TYPE_CHAR )
+		if( a->type_ref == this->TYPE_BOOL )
 		{
 			if( b->type_ref == this->TYPE_BOOL )
-				a->set<bool>( a->get<bool>() && b->get<bool>() );
-		}
-		else if( a->type_ref == this->TYPE_CHAR )
-		{
-			a->set<bool>( ~(a->get<bool>()) );
+				a->set<char>( ( a->get<char>() & b->get<char>() ) ? 1 : 0 );
 		}
 		else if( a->type_ref == this->TYPE_ARRAY )
 		{
@@ -732,9 +728,9 @@ namespace sslc
 	{
 		variable * a = this->stack[this->stack.size()-1];
 		
-		if( a->type_ref == this->TYPE_CHAR )
+		if( a->type_ref == this->TYPE_BOOL )
 		{
-			a->set<bool>( ~(a->get<bool>()) );
+			a->set<char>( a->get<char>() ? 0 : 1 );
 		}
 		else if( a->type_ref == this->TYPE_ARRAY )
 		{
@@ -779,47 +775,67 @@ namespace sslc
 		
 		bool value = false;
 		
-		if( a->type_ref == this->TYPE_CHAR )
+		if( a->type_ref == this->TYPE_BOOL )
 		{
 			if( b->type_ref == this->TYPE_BOOL )
-				if( a->get<bool>() == b->get<bool>() )
+			{
+				if( a->get<char>() && b->get<char>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_CHAR )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<char>() == b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<char>() == b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<char>() == b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_INT )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<long long>() == b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<long long>() == b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<long long>() == b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_REAL )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<double>() == b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<double>() == b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<double>() == b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_STRING && b->type_ref == this->TYPE_STRING )
 		{
@@ -830,6 +846,7 @@ namespace sslc
 		this->pop();
 		this->pop();
 		this->push<bool>(value);
+		this->stack.back()->set<char>( value ? 1 : 0 );
 	}
 	
 	void machine::cmpne()
@@ -839,47 +856,65 @@ namespace sslc
 		
 		bool value = false;
 		
-		if( a->type_ref == this->TYPE_CHAR )
+		if( a->type_ref == this->TYPE_BOOL )
 		{
 			if( b->type_ref == this->TYPE_BOOL )
-				if( a->get<bool>() != b->get<bool>() )
+				if( ( a->get<char>() && b->get<char>() == 0 ) || ( a->get<char>() == 0 && b->get<char>() ) )
 					value = true;
 		}
 		else if( a->type_ref == this->TYPE_CHAR )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<char>() != b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<char>() != b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<char>() != b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_INT )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<long long>() != b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<long long>() != b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<long long>() != b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_REAL )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<double>() != b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<double>() != b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<double>() != b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_STRING && b->type_ref == this->TYPE_STRING )
 		{
@@ -890,6 +925,7 @@ namespace sslc
 		this->pop();
 		this->pop();
 		this->push<bool>(value);
+		this->stack.back()->set<char>( value ? 1 : 0 );
 	}
 	
 	void machine::cmpl()
@@ -902,38 +938,56 @@ namespace sslc
 		if( a->type_ref == this->TYPE_CHAR )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<char>() < b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<char>() < b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<char>() < b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_INT )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<long long>() < b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<long long>() < b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<long long>() < b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_REAL )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<double>() < b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<double>() < b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<double>() < b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_STRING && b->type_ref == this->TYPE_STRING )
 		{
@@ -944,6 +998,7 @@ namespace sslc
 		this->pop();
 		this->pop();
 		this->push<bool>(value);
+		this->stack.back()->set<char>( value ? 1 : 0 );
 	}
 	
 	void machine::cmple()
@@ -956,38 +1011,56 @@ namespace sslc
 		if( a->type_ref == this->TYPE_CHAR )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<char>() <= b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<char>() <= b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<char>() <= b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_INT )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<long long>() <= b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<long long>() <= b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<long long>() <= b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_REAL )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<double>() <= b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<double>() <= b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<double>() <= b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_STRING && b->type_ref == this->TYPE_STRING )
 		{
@@ -998,6 +1071,7 @@ namespace sslc
 		this->pop();
 		this->pop();
 		this->push<bool>(value);
+		this->stack.back()->set<char>( value ? 1 : 0 );
 	}
 	
 	void machine::cmpg()
@@ -1010,38 +1084,56 @@ namespace sslc
 		if( a->type_ref == this->TYPE_CHAR )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<char>() > b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<char>() > b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<char>() > b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_INT )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<long long>() > b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<long long>() > b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<long long>() > b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_REAL )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<double>() > b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<double>() > b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<double>() > b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_STRING && b->type_ref == this->TYPE_STRING )
 		{
@@ -1052,6 +1144,7 @@ namespace sslc
 		this->pop();
 		this->pop();
 		this->push<bool>(value);
+		this->stack.back()->set<char>( value ? 1 : 0 );
 	}
 	
 	void machine::cmpge()
@@ -1064,38 +1157,56 @@ namespace sslc
 		if( a->type_ref == this->TYPE_CHAR )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<char>() >= b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<char>() >= b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<char>() >= b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_INT )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<long long>() >= b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<long long>() >= b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<long long>() >= b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_REAL )
 		{
 			if( b->type_ref == this->TYPE_CHAR )
+			{
 				if( a->get<double>() >= b->get<char>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_INT )
+			{
 				if( a->get<double>() >= b->get<long long>() )
 					value = true;
+			}
 			else if( b->type_ref == this->TYPE_REAL )
+			{
 				if( a->get<double>() >= b->get<double>() )
 					value = true;
+			}
 		}
 		else if( a->type_ref == this->TYPE_STRING && b->type_ref == this->TYPE_STRING )
 		{
@@ -1106,6 +1217,7 @@ namespace sslc
 		this->pop();
 		this->pop();
 		this->push<bool>(value);
+		this->stack.back()->set<char>( value ? 1 : 0 );
 	}
 	
 };

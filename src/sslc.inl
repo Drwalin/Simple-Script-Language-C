@@ -140,9 +140,10 @@ namespace sslc
 	template < typename T >
 	inline void machine::push( T & value )
 	{
-		if( typeid(decltype(value)) == typeid(type) )
+		if( typeid(decltype(value)) == typeid(variable) )
 		{
 			this->stack.emplace_back( (variable*)&value );
+			this->stack.back()->makereference();
 		}
 		else
 		{
@@ -151,9 +152,12 @@ namespace sslc
 			{
 				if( var->valid() )
 				{
+					var->references = 1;
 					var->access<T>() = value;
 					this->stack.emplace_back( var );
 				}
+				else
+					delete var;
 			}
 		}
 	}
@@ -195,6 +199,13 @@ namespace sslc
 		this->current_function = this->functions[function_name];
 		if( this->current_function )
 		{
+			this->stack.push_back( (variable*)(0) );
+			this->stack.push_back( (variable*)(0) );
+			this->stack.push_back( (variable*)(0) );
+			this->rsp = this->stack.size();
+			for( long long i = 0; i < this->current_function->local_variables_types.size(); ++i )
+				this->push( *variable::make( this->current_function->local_variables_types[i] ) );
+			this->rip = &(this->current_function->code[0]);
 			this->interprete();
 			Ret ret = this->stack.back()->get<Ret>();
 			this->pop();
