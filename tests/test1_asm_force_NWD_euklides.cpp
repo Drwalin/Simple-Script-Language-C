@@ -7,15 +7,31 @@
 template < typename T >
 void add( std::vector < unsigned char > & code, const T & value )
 {
-	code.resize( code.size() + sizeof(T) );
-	(*(T*)(&(code[code.size()-sizeof(T)]))) = value;
-	//code.insert( code.end(), &value, (&value)+sizeof(T) );
+	if( typeid(T) == typeid(std::string) )
+	{
+		std::string v = *(std::string*)(&value);
+		for( int i = 0; i <= v.size(); ++i )
+			code.emplace_back( v[i] );
+	}
+	else
+	{
+		code.resize( code.size() + sizeof(T) );
+		(*(T*)(&(code[code.size()-sizeof(T)]))) = value;
+	}
 }
 
 int main()
 {
 	sslc::machine * env = new sslc::machine();
 	env->init();
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	sslc::function * func = new sslc::function;
 	func->registered = false;
@@ -25,7 +41,7 @@ int main()
 	func->return_type = env->get_type<long long>();
 	
 #define INSTRUCTION( x ) add<unsigned char>( func->code, sslc::x );
-#define VALUE( x ) add<long long>( func->code, x );
+#define VALUE( x ) add<long long>( func->code, (long long)(x) );
 
 #define PUSH_A { INSTRUCTION( PUSHREF ); VALUE( -4 ); }
 #define PUSH_B { INSTRUCTION( PUSHREF ); VALUE( -5 ); }
@@ -54,25 +70,76 @@ int main()
 		PUSH_C;					// 0x54
 		POP_B;					// 0x5D
 		
-		PUSH_A;
-		INSTRUCTION( PRINTI );
-		PUSH_B;
-		INSTRUCTION( PRINTI );
-		
 		INSTRUCTION( JMP );		// 0x66
 		VALUE( 0 );				// 0x67
 	
 	
 	env->add_function_manually( "NWD", func );
 	
-	long long a, b, c;
-	a = 12;
-	b = 16;
-	//scanf( "%lli%lli", &a, &b );
 	
-	c = env->call<long long>( "NWD", a, b );
 	
-	printf( "\n NWD( %lli, %lli ) = %lli", a, b, c );
+	
+	
+	
+	std::string format;
+	
+	func = new sslc::function;
+	func->registered = false;
+	func->local_variables_types.emplace_back( env->get_type<long long>() );
+	func->local_variables_types.emplace_back( env->get_type<long long>() );
+	func->local_variables_types.emplace_back( env->get_type<long long>() );
+	func->return_type = env->get_type<long long>();
+	
+#define INST2S( A, B ) { INSTRUCTION( A ); add( func->code, B ); }
+#define INST2( A, B ) { INSTRUCTION( A ); VALUE( B ); }
+#define INST1( A ) INSTRUCTION( A );
+	
+	INST2( PUSHREF, 0 );
+	INST1( GETI );
+	INST2( PUSHREF, 1 );
+	INST1( GETI );
+	
+	INST2( PUSHCOPY, 0 );
+	INST2( PUSHCOPY, 1 );
+	INST2S( CALL, std::string("NWD") );
+	INST2( POPVALUE, 2 );
+	
+	INST2S( PUSHSTR, std::string("\n NWD( ") );
+	INST1( PRINTS );
+	INST2( PUSHREF, 0 );
+	INST1( PRINTI );
+	INST2S( PUSHSTR, std::string(", ") );
+	INST1( PRINTS );
+	INST2( PUSHREF, 1 );
+	INST1( PRINTI );
+	INST2S( PUSHSTR, std::string(" ) = ") );
+	INST1( PRINTS );
+	INST2( PUSHREF, 2 );
+	INST1( PRINTI );
+	INST2S( PUSHSTR, std::string("\n") );
+	INST1( PRINTS );
+	
+	INST2( PUSHINT, 0 );
+	INST1( RET );
+	
+	
+	env->add_function_manually( "main", func );
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	env->call<long long>( "main" );
 	
 	delete env;
 	

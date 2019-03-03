@@ -58,7 +58,6 @@ namespace sslc
 		if( this->data )
 		{
 			this->references--;
-			printf( "\n Reference of [0x%X]: %lli", this, this->references );
 			if( this->references == 0 )
 			{
 				delete this;
