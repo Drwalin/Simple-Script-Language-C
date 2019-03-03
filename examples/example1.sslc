@@ -1,27 +1,30 @@
 
-var int a;
-var real b;
-var complex c;
-var quaternion d;
-var octonion e;
-
-var vec2 f;
-var vec3 g;
-var vec4 h;
-var mat4x4 i;
-var mat3x3 j;
-var mat2x2 k;
-
-var arr int l;			// std::vector<int>
-var map string int m;	// std::map<std::string,int>
-var set string n;		// std::set<string>
-var string o;			// std::string
-
-
-
-call arr::resize( l, 3  );
-var int z;
-z = call function_name_1( 31, "Hello World! ", a, l[0] );
+func main = def ( /*arg int argc, arg arr string argv*/ ) -> int
+{
+	var char aa;			// char
+	var int a;				// long long
+	var real b;				// double
+	var complex c;			// std::complex
+	var quaternion d;		// boost::math::quaternion
+	var octonion e;			// boost::math::octonion
+	
+	var vec2 f;				// glm::vec2
+	var vec3 g;				// glm::vec3
+	var vec4 h;				// glm::vec4
+	var mat2x2 k;			// glm::mat2x2
+	var mat3x3 j;			// glm::mat3x3
+	var mat4x4 i;			// glm::mat4x4
+	
+	//var array int l;		// ??? std::vector<int>
+	//var map string int m;	// ??? std::map<std::string,int>
+	//var set string n;		// ??? std::set<string>
+	var string o;			// std::string
+	
+	//call arr::resize( l, 3  );
+	a = call function_name_1( 31, "Hello World! ", a, g );
+	
+	return 0;
+}
 
 func function_name_1 = def ( arg int A, arg string B, ref int _a, ret vec3 _b ) -> int
 {
@@ -38,5 +41,4 @@ func function_name_1 = def ( arg int A, arg string B, ref int _a, ret vec3 _b ) 
 	
 	return C;
 }
-
 
