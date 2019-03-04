@@ -27,7 +27,7 @@ namespace sslc
 				str = *(const char*)(this->rip+1);
 				this->current_function = this->functions[(const char*)(this->rip+1)];
 				for( i = 0; i < this->current_function->local_variables_types.size(); ++i )
-					this->push( *variable::make( this->current_function->local_variables_types[i] ) );
+					this->push( *variable::make( this, this->current_function->local_variables_types[i] ) );
 				
 				this->rip = &(this->current_function->code.front());
 				//printf( "\n     DONE!" );
@@ -256,7 +256,7 @@ namespace sslc
 				break;
 			case PUSHCOPY:
 				//printf( "\n PUSHCOPY at: 0x%X", unsigned(this->rip-&(this->current_function->code[0])) );
-				this->push( *variable::make( this->stack[this->rsp+*(const long long*)(this->rip+1)]->type_ref ) );
+				this->push( *variable::make( this, this->stack[this->rsp+*(const long long*)(this->rip+1)]->type_ref ) );
 				this->stack.back()->set_value_of( *(this->stack[this->rsp+*(const long long*)(this->rip+1)]) );
 				this->rip += 1 + sizeof(long long);
 				//printf( "\n     DONE!" );
@@ -266,7 +266,7 @@ namespace sslc
 				//printf( "\n POPCOPY at: 0x%X", unsigned(this->rip-&(this->current_function->code[0])) );
 				i = this->rsp + *(const long long*)(this->rip+1);
 				this->stack[i]->dereference();
-				this->stack[i] = variable::make( this->stack[this->rsp+*(const long long*)(this->rip+1)]->type_ref );
+				this->stack[i] = variable::make( this, this->stack[this->rsp+*(const long long*)(this->rip+1)]->type_ref );
 				this->stack[i]->set_value_of( *(this->stack[this->rsp+*(const long long*)(this->rip+1)]) );
 				this->rip += 1 + sizeof(long long);
 				this->pop();

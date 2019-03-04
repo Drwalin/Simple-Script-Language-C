@@ -59,6 +59,7 @@ int main()
 	PUSH_A;						// 0x1C
 	INSTRUCTION( RET );			// 0x25
 	
+		/*
 		PUSH_A;					// 0x26
 		PUSH_B;					// 0x2F
 		INSTRUCTION( MOD );		// 0x38
@@ -72,9 +73,23 @@ int main()
 		
 		INSTRUCTION( JMP );		// 0x66
 		VALUE( 0 );				// 0x67
+		*/
+		
+		
+		PUSH_A;					// 0x26
+		PUSH_B;					// 0x2F
+		INSTRUCTION( MOD );		// 0x38
+		PUSH_B;					// 0x39
+		
+		POP_A;					// 0x42
+		POP_B;					// 0x4B
+		
+		INSTRUCTION( JMP );		// 0x54
+		VALUE( 0 );				// 0x55
 	
 	
 	env->add_function_manually( "NWD", func );
+	
 	
 	
 	

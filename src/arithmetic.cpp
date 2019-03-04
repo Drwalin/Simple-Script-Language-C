@@ -13,7 +13,9 @@ namespace sslc
 {
 	void machine::add()
 	{
-		variable * a = this->stack[this->stack.size()-2];
+		variable * tmp = this->stack[this->stack.size()-2];
+		variable * a = variable::make( this, tmp->type_ref );
+		a->set_value_of( *tmp );
 		variable * b = this->stack[this->stack.size()-1];
 		
 		if( a->type_ref == this->TYPE_CHAR )
@@ -45,7 +47,7 @@ namespace sslc
 		}
 		else if( a->type_ref == this->TYPE_STRING )
 		{
-			if( a->type_ref == this->TYPE_STRING )
+			if( b->type_ref == this->TYPE_STRING )
 				a->access<std::string>() += b->get<std::string>();
 			
 			else if( b->type_ref == this->TYPE_CHAR )
@@ -55,7 +57,7 @@ namespace sslc
 			else if( b->type_ref == this->TYPE_REAL )
 				a->access<std::string>() += std::to_string(b->get<double>());
 			
-			else if( a->type_ref == this->TYPE_COMPLEX )
+			else if( b->type_ref == this->TYPE_COMPLEX )
 			{
 				a->access<std::string>() += "(";
 				a->access<std::string>() += b->get<complex>().real();
@@ -63,7 +65,7 @@ namespace sslc
 				a->access<std::string>() += b->get<complex>().imag();
 				a->access<std::string>() += ")";
 			}
-			else if( a->type_ref == this->TYPE_QUATERNION )
+			else if( b->type_ref == this->TYPE_QUATERNION )
 			{
 				a->access<std::string>() += "(";
 				a->access<std::string>() += b->get<quaternion>().R_component_1();
@@ -75,7 +77,7 @@ namespace sslc
 				a->access<std::string>() += b->get<quaternion>().R_component_4();
 				a->access<std::string>() += ")";
 			}
-			else if( a->type_ref == this->TYPE_OCTONION )
+			else if( b->type_ref == this->TYPE_OCTONION )
 			{
 				a->access<std::string>() += "(";
 				a->access<std::string>() += b->get<octonion>().R_component_1();
@@ -96,7 +98,7 @@ namespace sslc
 				a->access<std::string>() += ")";
 			}
 			
-			else if( a->type_ref == this->TYPE_VEC2 )
+			else if( b->type_ref == this->TYPE_VEC2 )
 			{
 				a->access<std::string>() += "(";
 				a->access<std::string>() += b->get<glm::vec2>().x;
@@ -104,7 +106,7 @@ namespace sslc
 				a->access<std::string>() += b->get<glm::vec2>().y;
 				a->access<std::string>() += ")";
 			}
-			else if( a->type_ref == this->TYPE_VEC3 )
+			else if( b->type_ref == this->TYPE_VEC3 )
 			{
 				a->access<std::string>() += "(";
 				a->access<std::string>() += b->get<glm::vec3>().x;
@@ -114,7 +116,7 @@ namespace sslc
 				a->access<std::string>() += b->get<glm::vec3>().z;
 				a->access<std::string>() += ")";
 			}
-			else if( a->type_ref == this->TYPE_VEC4 )
+			else if( b->type_ref == this->TYPE_VEC4 )
 			{
 				a->access<std::string>() += "(";
 				a->access<std::string>() += b->get<glm::vec4>().x;
@@ -127,7 +129,7 @@ namespace sslc
 				a->access<std::string>() += ")";
 			}
 			
-			else if( a->type_ref == this->TYPE_MAT2X2 )
+			else if( b->type_ref == this->TYPE_MAT2X2 )
 			{
 				a->access<std::string>() += "(";
 				for( int i = 0; i < 2; ++i )
@@ -145,7 +147,7 @@ namespace sslc
 				}
 				a->access<std::string>() += ")";
 			}
-			else if( a->type_ref == this->TYPE_MAT3X3 )
+			else if( b->type_ref == this->TYPE_MAT3X3 )
 			{
 				a->access<std::string>() += "(";
 				for( int i = 0; i < 3; ++i )
@@ -163,7 +165,7 @@ namespace sslc
 				}
 				a->access<std::string>() += ")";
 			}
-			else if( a->type_ref == this->TYPE_MAT4X4 )
+			else if( b->type_ref == this->TYPE_MAT4X4 )
 			{
 				a->access<std::string>() += "(";
 				for( int i = 0; i < 4; ++i )
@@ -184,33 +186,37 @@ namespace sslc
 		}
 		else if( a->type_ref == b->type_ref )
 		{
-			if( a->type_ref == this->TYPE_COMPLEX )
+			if( b->type_ref == this->TYPE_COMPLEX )
 				a->access<complex>() += b->get<complex>();
-			else if( a->type_ref == this->TYPE_QUATERNION )
+			else if( b->type_ref == this->TYPE_QUATERNION )
 				a->access<quaternion>() += b->get<quaternion>();
-			else if( a->type_ref == this->TYPE_OCTONION )
+			else if( b->type_ref == this->TYPE_OCTONION )
 				a->access<octonion>() += b->get<octonion>();
 			
-			else if( a->type_ref == this->TYPE_VEC2 )
+			else if( b->type_ref == this->TYPE_VEC2 )
 				a->access<glm::vec2>() += b->get<glm::vec2>();
-			else if( a->type_ref == this->TYPE_VEC3 )
+			else if( b->type_ref == this->TYPE_VEC3 )
 				a->access<glm::vec3>() += b->get<glm::vec3>();
-			else if( a->type_ref == this->TYPE_VEC4 )
+			else if( b->type_ref == this->TYPE_VEC4 )
 				a->access<glm::vec4>() += b->get<glm::vec4>();
-			else if( a->type_ref == this->TYPE_MAT2X2 )
+			else if( b->type_ref == this->TYPE_MAT2X2 )
 				a->access<glm::mat2x2>() += b->get<glm::mat2x2>();
-			else if( a->type_ref == this->TYPE_MAT3X3 )
+			else if( b->type_ref == this->TYPE_MAT3X3 )
 				a->access<glm::mat3x3>() += b->get<glm::mat3x3>();
-			else if( a->type_ref == this->TYPE_MAT4X4 )
+			else if( b->type_ref == this->TYPE_MAT4X4 )
 				a->access<glm::mat4x4>() += b->get<glm::mat4x4>();
 		}
 		
 		this->pop();
+		this->pop();
+		this->push( *a );
 	}
 	
 	void machine::sub()
 	{
-		variable * a = this->stack[this->stack.size()-2];
+		variable * tmp = this->stack[this->stack.size()-2];
+		variable * a = variable::make( this, tmp->type_ref );
+		a->set_value_of( *tmp );
 		variable * b = this->stack[this->stack.size()-1];
 		
 		if( a->type_ref == this->TYPE_CHAR )
@@ -242,33 +248,37 @@ namespace sslc
 		}
 		else if( a->type_ref == b->type_ref )
 		{
-			if( a->type_ref == this->TYPE_COMPLEX )
+			if( b->type_ref == this->TYPE_COMPLEX )
 				a->access<complex>() -= b->get<complex>();
-			else if( a->type_ref == this->TYPE_QUATERNION )
+			else if( b->type_ref == this->TYPE_QUATERNION )
 				a->access<quaternion>() -= b->get<quaternion>();
-			else if( a->type_ref == this->TYPE_OCTONION )
+			else if( b->type_ref == this->TYPE_OCTONION )
 				a->access<octonion>() -= b->get<octonion>();
 			
-			else if( a->type_ref == this->TYPE_VEC2 )
+			else if( b->type_ref == this->TYPE_VEC2 )
 				a->access<glm::vec2>() -= b->get<glm::vec2>();
-			else if( a->type_ref == this->TYPE_VEC3 )
+			else if( b->type_ref == this->TYPE_VEC3 )
 				a->access<glm::vec3>() -= b->get<glm::vec3>();
-			else if( a->type_ref == this->TYPE_VEC4 )
+			else if( b->type_ref == this->TYPE_VEC4 )
 				a->access<glm::vec4>() -= b->get<glm::vec4>();
-			else if( a->type_ref == this->TYPE_MAT2X2 )
+			else if( b->type_ref == this->TYPE_MAT2X2 )
 				a->access<glm::mat2x2>() -= b->get<glm::mat2x2>();
-			else if( a->type_ref == this->TYPE_MAT3X3 )
+			else if( b->type_ref == this->TYPE_MAT3X3 )
 				a->access<glm::mat3x3>() -= b->get<glm::mat3x3>();
-			else if( a->type_ref == this->TYPE_MAT4X4 )
+			else if( b->type_ref == this->TYPE_MAT4X4 )
 				a->access<glm::mat4x4>() -= b->get<glm::mat4x4>();
 		}
 		
 		this->pop();
+		this->pop();
+		this->push( *a );
 	}
 	
 	void machine::mul()
 	{
-		variable * a = this->stack[this->stack.size()-2];
+		variable * tmp = this->stack[this->stack.size()-2];
+		variable * a = variable::make( this, tmp->type_ref );
+		a->set_value_of( *tmp );
 		variable * b = this->stack[this->stack.size()-1];
 		
 		if( a->type_ref == this->TYPE_CHAR )
@@ -402,11 +412,15 @@ namespace sslc
 		}
 		
 		this->pop();
+		this->pop();
+		this->push( *a );
 	}
 	
 	void machine::div()
 	{
-		variable * a = this->stack[this->stack.size()-2];
+		variable * tmp = this->stack[this->stack.size()-2];
+		variable * a = variable::make( this, tmp->type_ref );
+		a->set_value_of( *tmp );
 		variable * b = this->stack[this->stack.size()-1];
 		
 		if( a->type_ref == this->TYPE_CHAR )
@@ -540,61 +554,72 @@ namespace sslc
 		}
 		
 		this->pop();
+		this->pop();
+		this->push( *a );
 	}
 	
 	void machine::mod()
 	{
-		variable * a = this->stack[this->stack.size()-2];
+		variable * tmp = this->stack[this->stack.size()-2];
+		variable * a = variable::make( this, tmp->type_ref );
+		a->set_value_of( *tmp );
 		variable * b = this->stack[this->stack.size()-1];
 		
 		if( a->type_ref == b->type_ref )
 		{
-			if( a->type_ref == this->TYPE_CHAR )
+			if( b->type_ref == this->TYPE_CHAR )
 				a->access<char>() %= b->get<char>();
-			else if( a->type_ref == this->TYPE_INT )
+			else if( b->type_ref == this->TYPE_INT )
 				a->access<long long>() %= b->get<long long>();
-			
-			else if( a->type_ref == this->TYPE_REAL )
+			else if( b->type_ref == this->TYPE_REAL )
 				a->set<double>( fmod( a->get<double>(), b->get<double>() ) );
 		}
 		
 		this->pop();
+		this->pop();
+		this->push( *a );
 	}
 	
 	void machine::neg()
 	{
-		variable * a = this->stack[this->stack.size()-1];
+		variable * b = this->stack[this->stack.size()-1];
+		variable * a = variable::make( this, b->type_ref );
 		
 		if( a->type_ref == this->TYPE_CHAR )
-			a->set<char>( -(a->get<char>()) );
+			a->set<char>( -(b->get<char>()) );
 		else if( a->type_ref == this->TYPE_INT )
-			a->set<long long>( -(a->get<long long>()) );
+			a->set<long long>( -(b->get<long long>()) );
 		else if( a->type_ref == this->TYPE_REAL )
-			a->set<double>( -(a->get<double>()) );
+			a->set<double>( -(b->get<double>()) );
 		else if( a->type_ref == this->TYPE_COMPLEX )
-			a->set<complex>( -(a->get<complex>()) );
+			a->set<complex>( -(b->get<complex>()) );
 		else if( a->type_ref == this->TYPE_QUATERNION )
-			a->set<quaternion>( -(a->get<quaternion>()) );
+			a->set<quaternion>( -(b->get<quaternion>()) );
 		else if( a->type_ref == this->TYPE_OCTONION )
-			a->set<octonion>( -(a->get<octonion>()) );
+			a->set<octonion>( -(b->get<octonion>()) );
 		
 		else if( a->type_ref == this->TYPE_VEC2 )
-			a->set<glm::vec2>( -(a->get<glm::vec2>()) );
+			a->set<glm::vec2>( -(b->get<glm::vec2>()) );
 		else if( a->type_ref == this->TYPE_VEC3 )
-			a->set<glm::vec3>( -(a->get<glm::vec3>()) );
+			a->set<glm::vec3>( -(b->get<glm::vec3>()) );
 		else if( a->type_ref == this->TYPE_VEC4 )
-			a->set<glm::vec4>( -(a->get<glm::vec4>()) );
+			a->set<glm::vec4>( -(b->get<glm::vec4>()) );
 		else if( a->type_ref == this->TYPE_MAT2X2 )
-			a->set<glm::mat2x2>( -(a->get<glm::mat2x2>()) );
+			a->set<glm::mat2x2>( -(b->get<glm::mat2x2>()) );
 		else if( a->type_ref == this->TYPE_MAT3X3 )
-			a->set<glm::mat3x3>( -(a->get<glm::mat3x3>()) );
+			a->set<glm::mat3x3>( -(b->get<glm::mat3x3>()) );
 		else if( a->type_ref == this->TYPE_MAT4X4 )
-			a->set<glm::mat4x4>( -(a->get<glm::mat4x4>()) );
+			a->set<glm::mat4x4>( -(b->get<glm::mat4x4>()) );
+		
+		this->pop();
+		this->push( a );
 	}
 	
 	void machine::binary_xor()
 	{
-		variable * a = this->stack[this->stack.size()-2];
+		variable * tmp = this->stack[this->stack.size()-2];
+		variable * a = variable::make( this, tmp->type_ref );
+		a->set_value_of( *tmp );
 		variable * b = this->stack[this->stack.size()-1];
 		
 		if( a->type_ref == this->TYPE_BOOL )
@@ -633,11 +658,15 @@ namespace sslc
 		}
 		
 		this->pop();
+		this->pop();
+		this->push( *a );
 	}
 	
 	void machine::binary_or()
 	{
-		variable * a = this->stack[this->stack.size()-2];
+		variable * tmp = this->stack[this->stack.size()-2];
+		variable * a = variable::make( this, tmp->type_ref );
+		a->set_value_of( *tmp );
 		variable * b = this->stack[this->stack.size()-1];
 		
 		if( a->type_ref == this->TYPE_BOOL )
@@ -676,11 +705,15 @@ namespace sslc
 		}
 		
 		this->pop();
+		this->pop();
+		this->push( *a );
 	}
 	
 	void machine::binary_and()
 	{
-		variable * a = this->stack[this->stack.size()-2];
+		variable * tmp = this->stack[this->stack.size()-2];
+		variable * a = variable::make( this, tmp->type_ref );
+		a->set_value_of( *tmp );
 		variable * b = this->stack[this->stack.size()-1];
 		
 		if( a->type_ref == this->TYPE_BOOL )
@@ -722,15 +755,18 @@ namespace sslc
 		}
 		
 		this->pop();
+		this->pop();
+		this->push( *a );
 	}
 	
 	void machine::binary_not()
 	{
-		variable * a = this->stack[this->stack.size()-1];
+		variable * b = this->stack[this->stack.size()-1];
+		variable * a = variable::make( this, b->type_ref );
 		
 		if( a->type_ref == this->TYPE_BOOL )
 		{
-			a->set<char>( a->get<char>() ? 0 : 1 );
+			a->set<char>( b->get<char>() ? 0 : 1 );
 		}
 		else if( a->type_ref == this->TYPE_ARRAY )
 		{
@@ -758,6 +794,9 @@ namespace sslc
 			for( ; A < AE; ++A )
 				*A = ~(*A);
 		}
+		
+		this->pop();
+		this->push( *a );
 	}
 	
 	/*

@@ -42,6 +42,7 @@ namespace sslc
 	{
 	private:
 		
+		class machine * env;
 		type * type_ref;
 		void * data;
 		
@@ -74,7 +75,7 @@ namespace sslc
 		
 		template < typename T >
 		static inline variable * make( class machine * env );						// initial this->references = 1
-		static inline variable * make( type * type_ref );		// initial this->references = 1
+		static inline variable * make( class machine * env, type * type_ref );		// initial this->references = 1
 	};
 	
 	class function
@@ -136,6 +137,9 @@ namespace sslc
 		
 		template < typename T >
 		type * get_type_one_two() const;
+		
+		void constructor( void * data, type * type_ref );
+		void destructor( void * data, type * type_ref );
 		
 		void cmpe();
 		void cmpne();

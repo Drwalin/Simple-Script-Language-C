@@ -48,20 +48,22 @@ namespace sslc
 	template < typename T >
 	inline variable * variable::make( class machine * env )
 	{
-		variable * ret = new variable();
-		ret->type_ref = env->get_type<T>();
-		ret->data = malloc( ret->type_ref->size_bytes );
-		ret->references = 1;
-		return ret;
+		return variable::make( env, env->get_type<T>() );
 	}
 	
-	inline variable * variable::make( type * type_ref )
+	inline variable * variable::make( class machine * env, type * type_ref )
 	{
-		variable * ret = new variable();
-		ret->type_ref = type_ref;
-		ret->data = malloc( ret->type_ref->size_bytes );
-		ret->references = 1;
-		return ret;
+		if( type_ref )
+		{
+			variable * ret = new variable();
+			ret->env = env;
+			ret->type_ref = type_ref;
+			ret->data = malloc( ret->type_ref->size_bytes );
+			ret->references = 1;
+			env->constructor( ret->data, type_ref );
+			return ret;
+		}
+		return NULL;
 	}
 	
 	
@@ -204,7 +206,7 @@ namespace sslc
 			this->stack.push_back( (variable*)(0) );
 			this->rsp = this->stack.size();
 			for( long long i = 0; i < this->current_function->local_variables_types.size(); ++i )
-				this->push( *variable::make( this->current_function->local_variables_types[i] ) );
+				this->push( *variable::make( this, this->current_function->local_variables_types[i] ) );
 			this->rip = &(this->current_function->code[0]);
 			this->interprete();
 			Ret ret = this->stack.back()->get<Ret>();

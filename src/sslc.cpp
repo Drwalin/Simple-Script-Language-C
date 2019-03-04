@@ -43,8 +43,26 @@ namespace sslc
 	
 	void variable::set_value_of( const variable & other )
 	{
-		memmove( this->data, other.data, std::min( this->type_ref->size_bytes, other.type_ref->size_bytes ) );
-		printf( "\n variable::set_value_of - is not done yet" );
+		if( this->type_ref == this->env->TYPE_STRING )
+		{
+			(*((std::string*)(this->data))) = (*((std::string*)(other.data)));
+		}
+		else if( this->type_ref == this->env->TYPE_ARRAY )
+		{
+			printf( "\n variable::set_value_of::TYPE_ARRAY is not done yet!" );
+		}
+		else if( this->type_ref == this->env->TYPE_MAP )
+		{
+			printf( "\n variable::set_value_of::TYPE_MAP is not done yet!" );
+		}
+		else if( this->type_ref == this->env->TYPE_SET )
+		{
+			printf( "\n variable::set_value_of::TYPE_SET is not done yet!" );
+		}
+		else
+		{
+			memmove( this->data, other.data, std::min( this->type_ref->size_bytes, other.type_ref->size_bytes ) );
+		}
 	}
 	
 	void variable::makereference()
@@ -60,6 +78,7 @@ namespace sslc
 			this->references--;
 			if( this->references == 0 )
 			{
+				this->env->destructor( this->data, this->type_ref );
 				delete this;
 			}
 		}
@@ -70,6 +89,7 @@ namespace sslc
 		type_ref = NULL;
 		data = NULL;
 		references = 0;
+		env = NULL;
 	}
 	
 	variable::~variable()
@@ -78,6 +98,7 @@ namespace sslc
 		if( data )
 			free( data );
 		references = 0;
+		env = NULL;
 	}
 	
 	
@@ -98,7 +119,58 @@ namespace sslc
 	
 	
 	
+	template < typename T >
+	void CALL_DESTRUCTOR_OF_OBJECT_BY_CLASS_AT_POINTER( T * data )
+	{
+		data->~T();
+	}
 	
+	void machine::constructor( void * data, type * type_ref )
+	{
+		if( data && type_ref )
+		{
+			if( type_ref == this->TYPE_STRING )
+			{
+				new (data) std::string;
+			}
+			else if( type_ref == this->TYPE_ARRAY )
+			{
+				printf( "\n machine::constructor::TYPE_ARRAY is not done yet!" );
+			}
+			else if( type_ref == this->TYPE_MAP )
+			{
+				printf( "\n machine::constructor::TYPE_MAP is not done yet!" );
+			}
+			else if( type_ref == this->TYPE_SET )
+			{
+				printf( "\n machine::constructor::TYPE_SET is not done yet!" );
+			}
+		}
+	}
+	
+	void machine::destructor( void * data, type * type_ref )
+	{
+		if( data && type_ref )
+		{
+			if( type_ref == this->TYPE_STRING )
+			{
+				//((std::string*)data)->~string();
+				CALL_DESTRUCTOR_OF_OBJECT_BY_CLASS_AT_POINTER<std::string>( (std::string*)data );
+			}
+			else if( type_ref == this->TYPE_ARRAY )
+			{
+				printf( "\n machine::destructor::TYPE_ARRAY is not done yet!" );
+			}
+			else if( type_ref == this->TYPE_MAP )
+			{
+				printf( "\n machine::destructor::TYPE_MAP is not done yet!" );
+			}
+			else if( type_ref == this->TYPE_SET )
+			{
+				printf( "\n machine::destructor::TYPE_SET is not done yet!" );
+			}
+		}
+	}
 	
 	int machine::add_function_manually( const char * function_name, function * func )
 	{
