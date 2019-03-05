@@ -132,10 +132,10 @@ namespace sslc
 			
 			
 			case CMPE:
-				//printf( "\n CMPE at: 0x%X", unsigned(this->rip-&(this->current_function->code[0])) );
+				printf( "\n CMPE at: %lli", (long long)(this->rip-&(this->current_function->code[0])) );
 				this->cmpe();
 				this->rip++;
-				//printf( "\n     DONE!" );
+				printf( "\n     DONE!" );
 				break;
 			case CMPNE:
 				//printf( "\n CMPNE at: 0x%X", unsigned(this->rip-&(this->current_function->code[0])) );

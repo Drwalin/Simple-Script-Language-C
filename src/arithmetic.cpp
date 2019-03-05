@@ -437,7 +437,13 @@ namespace sslc
 			if( b->type_ref == this->TYPE_CHAR )
 				a->access<long long>() /= b->get<char>();
 			else if( b->type_ref == this->TYPE_INT )
+			{
+				printf( "\n DIV" );
+				printf( "\n this->stack.size() = %lli", (long long)(this->stack.size()) );
+				printf( "\n this->rsp = %lli", (long long)(this->rsp) );
+				printf( "\n a = %lli ; b = %lli", a->get<long long>(), b->get<long long>() );
 				a->access<long long>() /= b->get<long long>();
+			}
 			else if( b->type_ref == this->TYPE_REAL )
 				a->access<long long>() /= b->get<double>();
 		}
@@ -570,7 +576,13 @@ namespace sslc
 			if( b->type_ref == this->TYPE_CHAR )
 				a->access<char>() %= b->get<char>();
 			else if( b->type_ref == this->TYPE_INT )
+			{
+				printf( "\n MOD" );
+				printf( "\n this->stack.size() = %lli", (long long)(this->stack.size()) );
+				printf( "\n this->rsp = %lli", (long long)(this->rsp) );
+				printf( "\n a = %lli ; b = %lli", a->get<long long>(), b->get<long long>() );
 				a->access<long long>() %= b->get<long long>();
+			}
 			else if( b->type_ref == this->TYPE_REAL )
 				a->set<double>( fmod( a->get<double>(), b->get<double>() ) );
 		}
@@ -639,9 +651,18 @@ namespace sslc
 		{
 			
 		}
-		else if( a->type_ref == this->TYPE_STRING )
+		else if( a->type_ref == this->TYPE_STRING && b->type_ref == this->TYPE_STRING )
 		{
+			unsigned long long size = a->get<std::string>().size();
+			if( size < b->get<std::string>().size() )
+				size = b->get<std::string>().size();
+			++size;
 			
+			a->access<std::string>().resize( size );
+			
+			unsigned long long i;
+			for( unsigned long long i = 0; i < size; ++i )
+				a->access<std::string>()[i] ^= b->access<std::string>()[i];
 		}
 		else
 		{
@@ -686,9 +707,18 @@ namespace sslc
 		{
 			
 		}
-		else if( a->type_ref == this->TYPE_STRING )
+		else if( a->type_ref == this->TYPE_STRING && b->type_ref == this->TYPE_STRING )
 		{
+			unsigned long long size = a->get<std::string>().size();
+			if( size < b->get<std::string>().size() )
+				size = b->get<std::string>().size();
+			++size;
 			
+			a->access<std::string>().resize( size );
+			
+			unsigned long long i;
+			for( unsigned long long i = 0; i < size; ++i )
+				a->access<std::string>()[i] |= b->access<std::string>()[i];
 		}
 		else
 		{
@@ -733,9 +763,18 @@ namespace sslc
 		{
 			
 		}
-		else if( a->type_ref == this->TYPE_STRING )
+		else if( a->type_ref == this->TYPE_STRING && b->type_ref == this->TYPE_STRING )
 		{
+			unsigned long long size = a->get<std::string>().size();
+			if( size < b->get<std::string>().size() )
+				size = b->get<std::string>().size();
+			++size;
 			
+			a->access<std::string>().resize( size );
+			
+			unsigned long long i;
+			for( unsigned long long i = 0; i < size; ++i )
+				a->access<std::string>()[i] &= b->access<std::string>()[i];
 		}
 		else
 		{
@@ -849,8 +888,10 @@ namespace sslc
 			}
 			else if( b->type_ref == this->TYPE_INT )
 			{
+				printf( "\n { %lli == %lli } -> ", a->get<long long>(), b->get<long long>() );
 				if( a->get<long long>() == b->get<long long>() )
 					value = true;
+				printf( value ? "true" : "false" );
 			}
 			else if( b->type_ref == this->TYPE_REAL )
 			{
