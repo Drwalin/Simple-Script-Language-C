@@ -1,0 +1,18 @@
+
+NWD( a, b ) { x, y, c }
+{
+	if( b == 0 )
+	{
+		return { 1, 0 };
+	}
+	else
+	{
+		call NWD( b, a%b )->{ x, y };
+		
+		c = y;
+		y = x - ( ( a/b ) * y );
+		x = c;
+		
+		return { x, y };
+	}
+}

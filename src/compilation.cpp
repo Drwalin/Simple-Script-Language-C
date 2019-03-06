@@ -4,9 +4,20 @@
 
 #include "sslc.h"
 
-unsigned machine::compile( const char * file_name );
-
-unsigned machine::recompile( const char * file_name );
+namespace sslc
+{
+	
+	unsigned machine::compile( const char * file_name )
+	{
+		return 1;	// error
+	}
+	
+	unsigned machine::recompile( const char * file_name )
+	{
+		return 1;	// error
+	}
+	
+};
 
 #endif
 

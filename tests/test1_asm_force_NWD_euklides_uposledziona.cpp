@@ -64,45 +64,14 @@ int main()
 	INST2( PUSHINT, 0 );		// 37 : ret Y
 	INST1( RET );				// 46
 		
-		
-		INST2( PUSHREF, -5 );	// 47
-		INST2S( PUSHSTR, std::string("\n  ( A=") );
-		INST1( PRINTS );
-		INST1( PRINTI );
-		INST2( PUSHCOPY, -4 );
-		INST2S( PUSHSTR, std::string(", B=") );
-		INST1( PRINTS );
-		INST1( PRINTI );
-		INST2S( PUSHSTR, std::string(" )\n CALL NWD\n") );
-		INST1( PRINTS );
-		
-		
-		INST2( PUSHCOPY, -4 );	// 56 : push B as arg to NWD
-		INST2( PUSHCOPY, -5 );	// 65 : push A
-		INST2( PUSHCOPY, -4 );	// 74 : push B
-		INST1( MOD );			// 83 : a%b as arg to NWD
-		INST2S( CALL, std::string("NWD") );		// 92
-		
-		INST2S( PUSHSTR, std::string("\n RETURN FROM NWD\n") );
-		INST1( PRINTS );
+		INST2( PUSHCOPY, -4 );	// 47 : push B as arg to NWD
+		INST2( PUSHCOPY, -5 );	//  : push A
+		INST2( PUSHCOPY, -4 );	//  : push B
+		INST1( MOD );			//  : a%b as arg to NWD
+		INST2S( CALL, std::string("NWD") );		// 
 		
 		INST2( POPVALUE, 1 );	// 97
 		INST2( POPVALUE, 0 );	// 106
-		
-		INST2( PUSHREF, 0 );	// 47
-		INST2S( PUSHSTR, std::string("\n  ( X=") );
-		INST1( PRINTS );
-		INST1( PRINTI );
-		INST2( PUSHCOPY, 1 );
-		INST2S( PUSHSTR, std::string(", Y=") );
-		INST1( PRINTS );
-		INST1( PRINTI );
-		INST2S( PUSHSTR, std::string(" )\n") );
-		INST1( PRINTS );
-		
-		
-		
-		
 		INST2( PUSHCOPY, 1 );	// 115
 		
 		// PUSH ( x - ( y * (A%B) ) );

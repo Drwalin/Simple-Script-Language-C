@@ -30,6 +30,7 @@ namespace sslc
 	const static unsigned char CMPLE     = 0x33;
 	const static unsigned char CMPG      = 0x34;
 	const static unsigned char CMPGE     = 0x35;
+	
 	const static unsigned char JMPTRUE   = 0x36;
 	const static unsigned char JMPFALSE  = 0x37;
 	
